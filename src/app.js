@@ -17,4 +17,15 @@ app.use(express.static("public")); // to serve static files from public folder
 
 app.use(cookieParser()); 
 
+// routes 
+console.log("app.js")
+import userRouter from "./routes/user.routes.js";
+
+// routes decleration
+app.use('/api/v1/users', userRouter);
+
+app.get('/kanha',(req , res) => {
+    res.send('Hello Kanha!')
+})
+
 export {app};

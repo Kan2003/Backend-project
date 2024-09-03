@@ -31,7 +31,7 @@ const ragisterUser = asyncHandler(async (req, res) => {
   // check for user creation
   // return res
 
-  //console.log('body' , req.body)
+  console.log('body' , req.body)
   const { fullname, email, username, password } = req.body;
   if (
     [fullname, email, username, password].some((field) => field?.trim() === "")

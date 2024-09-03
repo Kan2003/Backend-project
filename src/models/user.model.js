@@ -1,4 +1,3 @@
-
 import mongoose , {Schema} from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -76,9 +75,7 @@ userSchema.methods.generateRefreshToken = function() {
     return jwt.sign(
         {
             _id: this._id,
-            email : this.email,
-            username : this.username,
-            fullname : this.fullname
+           
         },
         process.env.REFRESH_TOKEN_SECRET,
         {expiresIn:process.env.REFRESH_TOKEN_EXPIRY}

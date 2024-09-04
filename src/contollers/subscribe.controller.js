@@ -1,26 +1,34 @@
 import { Subscription } from "../models/subcription.model.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js"
 
 
-const subscribed = asyncHandler(async(req ,res) => {
+const subscribed = asyncHandler( async(req ,res) => {
     
-    const {username} = req.body;
-    console.log(req.body)
+    const userId = req.user._id;
+    // console.log(req.user)
     const channelName = req.params.channelName;
-    console.log(username, channelName)
-    if(!username?.trim()){
-        throw new ApiError(400, 'username not found')
+    // console.log(userId, channelName)
+
+    const channel = await User.findOne({ username : channelName });
+    // console.log('channel details' , channel)
+
+    const channelId = channel?._id;
+    // console.log('channel id ' , channelId)
+
+    if(!userId){
+        throw new ApiError(400, 'user not found')
     }
 
-    if(!channelName?.trim()){
-        throw new ApiError(400, 'channel name not found')
+    if(!channelId){
+        throw new ApiError(400, 'channel not found')
     }
 
     const existingSubscription = await Subscription.findOne({
-        channel : channelName,
-        subscriber : username
+        channel : channelId,
+        subscriber : userId
     })
 
     if(existingSubscription){
@@ -28,11 +36,11 @@ const subscribed = asyncHandler(async(req ,res) => {
     }
 
     const subscribe = await Subscription.create({
-        channel : channelName,
-        subscriber : username
+        channel : channelId,
+        subscriber : userId
     })
 
-    console.log(subscribe)
+    // console.log('subscriber ' , subscribe)
 
     if(!subscribe){
         throw new ApiError(500, 'Failed to subscribe')

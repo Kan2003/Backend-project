@@ -28,6 +28,26 @@ const uploadImage = async (filePath) => {
 }
 
 
+const uploadVideo = async (filePath) => {
+    try {
+        if(!filePath) return null;
+        //upload the file to cloudinary
+        const res = await cloudinary.uploader.upload(filePath , {
+            resource_type: 'auto',
+        })
+        // file uploaded successfully
+        // console.log("file is uploaded to cloudinary",res.url);
+        console.log(filePath)
+        fs.unlinkSync(filePath); // remove the locally saved temp file
+        return res;
+
+    } catch (error) {
+        fs.unlinkSync(filePath); // remove the locally saved temp file as upload operation got failed
+        return null;
+    }
+}
+
+
 const deleteImage = async(fileUrl) => {
     if(!fileUrl) return null;
 
@@ -42,4 +62,4 @@ const deleteImage = async(fileUrl) => {
     }
 }
 
-export {uploadImage , deleteImage}
+export {uploadImage , deleteImage , uploadVideo}

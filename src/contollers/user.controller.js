@@ -67,6 +67,8 @@ const ragisterUser = asyncHandler(async (req, res) => {
 
   const avatar = await uploadImage(avatarLocalPath);
 
+  console.log('avatar - ',avatar);
+
   const coverImage = await uploadImage(coverImageLocalPath);
 
   if (!avatar) {

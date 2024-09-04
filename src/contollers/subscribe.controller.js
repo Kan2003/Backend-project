@@ -32,7 +32,8 @@ const subscribed = asyncHandler( async(req ,res) => {
     })
 
     if(existingSubscription){
-        throw new ApiError(400, 'Already subscribed')
+        res.status(201)
+        .json(new ApiResponse(200 , 'already you are subscriber of this channel', existingSubscription))
     }
 
     const subscribe = await Subscription.create({

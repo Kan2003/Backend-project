@@ -32,7 +32,7 @@ const subscribed = asyncHandler( async(req ,res) => {
     })
 
     if(existingSubscription){
-        res.status(201)
+        return res.status(201)
         .json(new ApiResponse(200 , 'already you are subscriber of this channel', existingSubscription))
     }
 
@@ -47,7 +47,7 @@ const subscribed = asyncHandler( async(req ,res) => {
         throw new ApiError(500, 'Failed to subscribe')
     }
 
-    res.status(201)
+    return res.status(201)
     .json(new ApiResponse(200 , 'Subscribed successfully', subscribe))
 
 

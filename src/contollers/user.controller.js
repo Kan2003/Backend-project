@@ -105,9 +105,9 @@ const loginUser = asyncHandler(async (req, res) => {
   // access token & refresh token generation
   // send cookie
 
-  console.log(req.body);
+  // console.log(req.body);
   const { email, username, password } = req.body;
-  console.log(username, email, password);
+  // console.log(username, email, password);
 
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is required");
@@ -258,11 +258,11 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullname, email } = req.body;
-
+  console.log(req.body);
   if (!(fullname && email)) {
     throw new ApiError(400, "All fields are required");
   }
-
+  
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {

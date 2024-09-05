@@ -1,3 +1,5 @@
+
+import mongoose from "mongoose";
 import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -112,7 +114,51 @@ const addVideo = asyncHandler(async (req, res) => {
     }
 });
 
-export { addVideo };
+
+const getVideoDetails = asyncHandler(async (req, res) => {
+    const videoId = req.params.videoId;
+
+    // const objectId = mongoose.Types.ObjectId(videoId)
+
+    if(!videoId) {
+        throw new ApiError(400, 'Video ID is required');
+    }
+
+    const video = await Video.findById(videoId);
+
+    console.log(video);
+
+    const videoData = await Video.aggregate([
+        {
+            $match: {
+                _id : new mongoose.Types.ObjectId(req.params.videoId)
+            }
+        },
+        {
+            $lookup: {
+                from : 'users',
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'ownerDetails'
+            }
+        },
+        {
+            $addFields: {
+                owner : {
+                    $first : '$ownerDetails'
+                }
+            }
+        }
+    ])
+    console.log('videoDetails is -',videoData);
+    console.log('videoDetails is -',videoData[0]);
+
+    return res.status(200)
+    .json(new ApiResponse(200, 'Video details fetched successfully', videoData[0]));
+})
 
 
-// export { addVideo };
+
+
+export { addVideo , getVideoDetails };
+

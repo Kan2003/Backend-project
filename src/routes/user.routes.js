@@ -15,7 +15,7 @@ import {
 } from "../contollers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.Middleware.js";
-import { addVideo } from "../contollers/video.controller.js";
+import { addVideo, getVideoDetails } from "../contollers/video.controller.js";
 import { subscribed } from "../contollers/subscribe.controller.js";
 const router = Router();
 
@@ -65,6 +65,8 @@ router.route("/upload-video").post(
   addVideo
 );
 
+
+router.route('/getvideoDetails/:videoId').get(verifyJwt, getVideoDetails)
 
 
 

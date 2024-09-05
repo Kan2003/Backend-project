@@ -60,15 +60,23 @@ import { uploadImage, uploadVideo } from "../utils/cloudinary.js";
 
 
 const addVideo = asyncHandler(async (req, res) => {
+    // console.log('req.files', req.files)
     const { tittle, description } = req.body;
+    const user = req.user._id;
+
+    if(!user){
+        throw new ApiError(401, 'Unauthorized. Please log in');
+    }
 
     if (!(tittle && description)) {
         throw new ApiError(400, 'Title and description are required');
     }
 
-    console.log(req.files);
+    // console.log('req.body',req.body);
     const videoLocalPath = req.files?.video?.[0]?.path;
     const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+
+    // console.log(videoLocalPath)
 
     if (!(videoLocalPath && thumbnailLocalPath)) {
         throw new ApiError(400, 'Video and thumbnail are required');
@@ -94,6 +102,7 @@ const addVideo = asyncHandler(async (req, res) => {
             videoFile: video.url,
             thumbnail: thumbnail.url,
             duration: videoDuration,
+            owner : user,
         });
 
         return res.status(201).json(new ApiResponse(201, 'Video added successfully', videoData));

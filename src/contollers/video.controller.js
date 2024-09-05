@@ -160,15 +160,15 @@ const getVideoDetails = asyncHandler(async (req, res) => {
 
 const updateVideoDetails = asyncHandler(async (req, res) => {
   const { tittle, description } = req.body;
-  console.log(req.body);
-  console.log(tittle, description);
+  // console.log(req.body);
+  // console.log(tittle, description);
 
   const videoId = req.params.videoId;
-  console.log(videoId);
+  // console.log(videoId);
   if (!tittle) {
     throw new ApiError(400, "tittle and description are required");
   }
-  console.log(videoId);
+  // console.log(videoId);
 
   if (!videoId) {
     throw new ApiError(400, "Video ID not found");

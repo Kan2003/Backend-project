@@ -82,7 +82,7 @@ const addVideo = asyncHandler(async (req, res) => {
 
   try {
     const video = await uploadVideo(videoLocalPath);
-    console.log("Uploaded video:", video);
+    // console.log("Uploaded video:", video);
 
     const thumbnail = await uploadImage(thumbnailLocalPath);
     if (!(video && thumbnail)) {
@@ -115,7 +115,7 @@ const addVideo = asyncHandler(async (req, res) => {
   }
 });
 
-const getVideoDetails = asyncHandler(async (req, res) => {
+const getVideoDetailsById = asyncHandler(async (req, res) => {
   const videoId = req.params.videoId;
 
   if (!videoId) {
@@ -149,7 +149,7 @@ const getVideoDetails = asyncHandler(async (req, res) => {
     },
   ]);
 
-  console.log("videoDetails is -", videoData[0]);
+  // console.log("videoDetails is -", videoData[0]);
 
   return res
     .status(200)
@@ -189,4 +189,4 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Video details updated successfully", video));
 });
 
-export { addVideo, getVideoDetails, updateVideoDetails };
+export { addVideo, getVideoDetailsById, updateVideoDetails };

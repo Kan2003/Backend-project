@@ -2,7 +2,7 @@ import {mongoose , Schema, Types} from "mongoose";
 
 
 const likeSchema = new Schema({
-    commnet : {
+    comment : {
         type : Schema.Types.ObjectId,
         ref : 'Comment'
     },

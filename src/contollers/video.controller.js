@@ -195,47 +195,128 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 });
 
 const deleteVideo = asyncHandler(async (req, res) => {
- try {
-   const videoId = req.params.videoId;
- 
-   if (!videoId) {
-     throw new ApiError(400, "Video ID not found");
-   }
- 
-   const video = await Video.findById({
-     _id: new mongoose.Types.ObjectId(videoId),
-   });
- 
-   if (!video) {
-     throw new ApiError(404, "Video not found");
-   }
- 
-   const videoUrl = video.videoFile;
-   const thumbnailUrl = video.thumbnail;
-   console.log(videoUrl);
-   const deleteVideoFromCloudinary = await deleteVideoFromCloud(videoUrl);
-   const deleteThumbnailFromCloudinary = await deleteImage(thumbnailUrl);
+  try {
+    const videoId = req.params.videoId;
 
+    if (!videoId) {
+      throw new ApiError(400, "Video ID not found");
+    }
 
-   console.log('deleted video ',deleteVideoFromCloudinary)
- 
-   if (!(deleteVideoFromCloudinary && deleteThumbnailFromCloudinary)) {
-     throw new ApiError(
-       500,
-       "Failed to delete video & thumbnail from cloudinary"
-     );
-   }
- 
-   const deletedVideo = await Video.findByIdAndDelete({
-     _id: new mongoose.Types.ObjectId(videoId),
-   });
- 
-   return res
-     .status(200)
-     .json(new ApiResponse(200, "Video deleted successfully", deletedVideo));
- } catch (error) {
-  console.log('error occurred:', error);
- }
+    const video = await Video.findById({
+      _id: new mongoose.Types.ObjectId(videoId),
+    });
+
+    if (!video) {
+      throw new ApiError(404, "Video not found");
+    }
+
+    const videoUrl = video.videoFile;
+    const thumbnailUrl = video.thumbnail;
+    console.log(videoUrl);
+    const deleteVideoFromCloudinary = await deleteVideoFromCloud(videoUrl);
+    const deleteThumbnailFromCloudinary = await deleteImage(thumbnailUrl);
+
+    console.log("deleted video ", deleteVideoFromCloudinary);
+
+    if (!(deleteVideoFromCloudinary && deleteThumbnailFromCloudinary)) {
+      throw new ApiError(
+        500,
+        "Failed to delete video & thumbnail from cloudinary"
+      );
+    }
+
+    const deletedVideo = await Video.findByIdAndDelete({
+      _id: new mongoose.Types.ObjectId(videoId),
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "Video deleted successfully", deletedVideo));
+  } catch (error) {
+    console.log("error occurred:", error);
+  }
 });
 
-export { addVideo, getVideoDetailsById, updateVideoDetails, deleteVideo };
+const getAllVideos = asyncHandler(async (req, res) => {
+  const channelId = req.user._id;
+
+  if (!channelId) {
+    throw new ApiError(400, "Channel ID not found");
+  }
+
+  // const videos = await Video.find({
+  //   owner: new mongoose.Types.ObjectId(channelId)
+  // }).populate('owner');
+
+  const videos = await Video.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(channelId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+      },
+    },
+    {
+      $addFields: {
+        owner: {
+          $first: "$ownerDetails",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        tittle: 1,
+        description: 1,
+        videoFile: 1,
+        thumbnail: 1,
+        duration: 1,
+        createdAt: 1,
+        isPublished: 1,
+        // owner: 1,
+        // ownerDetails: { $arrayElemAt: ["$ownerDetails", 0] }
+      },
+    },
+  ]);
+
+  if (!videos) {
+    throw new ApiError(404, "No videos found for this channel");
+  }
+  console.log(videos);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Videos fetched successfully", videos));
+});
+
+const togglePublishStatus = asyncHandler(async (req, res) => {
+  const videoId = req.params.videoId;
+
+  if (!videoId) {
+    throw new ApiError(400, "Video ID not found");
+  }
+
+  const video = await Video.findById(videoId);
+  await Video.updateOne(
+    { _id: videoId },
+    { $set: { isPublished: !video.isPublished } }
+  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Video status updated successfully", video));
+});
+
+export {
+  addVideo,
+  getVideoDetailsById,
+  updateVideoDetails,
+  deleteVideo,
+  getAllVideos,
+  togglePublishStatus,
+};

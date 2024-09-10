@@ -15,8 +15,6 @@ import {
 } from "../contollers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.Middleware.js";
-import { addVideo, getVideoDetailsById, updateVideoDetails } from "../contollers/video.controller.js";
-import { subscribed } from "../contollers/subscribe.controller.js";
 const router = Router();
 
 router.route("/ragister").post(
@@ -51,12 +49,5 @@ router
 router.route("/c/:username").get(verifyJwt, getUserChannelProfile);
 
 router.route("/history").get(verifyJwt, getWatchHistory);
-// subscribe
-
-
-router.route("/subscribe/:channelName").post(
-  verifyJwt,
-  subscribed
-)
 
 export default router;

@@ -24,6 +24,7 @@ import tweetRouter from "./routes/tweet.routes.js";
 import likeRouter from "./routes/like.routes.js";
 import healthRouter from "./routes/healthcheck.routes.js";
 import SubscriberRouter from './routes/subscription.routes.js'
+import playlistRouter from './routes/playlist.routes.js'
 // routes decleration
 app.use('/api/v1/users', userRouter);
 
@@ -41,6 +42,8 @@ app.use('/api/v1/health' , healthRouter)
 
 
 app.use('/api/v1/subscribe' , SubscriberRouter)
+
+app.use('/api/v1/playlist' , playlistRouter)
 
 
 

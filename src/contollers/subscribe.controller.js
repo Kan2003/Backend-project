@@ -1,53 +1,50 @@
+import mongoose from "mongoose";
 import { Subscription } from "../models/subcription.model.js";
-import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js"
 
 
 const subscribed = asyncHandler( async(req ,res) => {
+    try {
+        const userId = req.user._id;
+        const channelId = req.params.channelId;
     
-    const userId = req.user._id;
-    const channelName = req.params.channelName;
-
-    const channel = await User.findOne({ username : channelName });
-
-    const channelId = channel?._id;
-    // console.log('channel id ' , channelId)
-
-    if(!userId){
-        throw new ApiError(400, 'user not found')
-    }
-
-    if(!channelId){
-        throw new ApiError(400, 'channel not found')
-    }
-
-    const existingSubscription = await Subscription.findOne({
-        channel : channelId,
-        subscriber : userId
-    })
-
-    if(existingSubscription){
+        if(!userId){
+            throw new ApiError(400, 'user not found')
+        }
+    
+        if(!channelId){
+            throw new ApiError(400, 'channel not found')
+        }
+        console.log(userId , channelId)
+        const existingSubscription = await Subscription.findOne({
+            channel : new mongoose.Types.ObjectId(channelId)  ,
+            subscriber : userId
+        })
+    
+        if(existingSubscription){
+            await existingSubscription.deleteOne();
+            return res.status(201)
+            .json(new ApiResponse(200 , 'unsubscibe this channel succesfully', existingSubscription))
+        }
+    
+        const subscribe = await Subscription.create({
+            channel : new mongoose.Types.ObjectId(channelId),
+            subscriber : userId
+        })
+    
+        // console.log('subscriber ' , subscribe)
+    
+        if(!subscribe){
+            throw new ApiError(500, 'Failed to subscribe')
+        }
+    
         return res.status(201)
-        .json(new ApiResponse(200 , 'already you are subscriber of this channel', existingSubscription))
+        .json(new ApiResponse(200 , 'Subscribed successfully', subscribe))
+    } catch (error) {
+        throw new ApiError(error.status || 500, error.message)
     }
-
-    const subscribe = await Subscription.create({
-        channel : channelId,
-        subscriber : userId
-    })
-
-    // console.log('subscriber ' , subscribe)
-
-    if(!subscribe){
-        throw new ApiError(500, 'Failed to subscribe')
-    }
-
-    return res.status(201)
-    .json(new ApiResponse(200 , 'Subscribed successfully', subscribe))
-
-
 })
 
 

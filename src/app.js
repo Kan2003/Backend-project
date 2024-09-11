@@ -26,6 +26,7 @@ import healthRouter from "./routes/healthcheck.routes.js";
 import SubscriberRouter from './routes/subscription.routes.js'
 import playlistRouter from './routes/playlist.routes.js'
 import dashboardRouter from './routes/dashboard.routes.js'
+import homeRouter from './routes/home.routes.js'
 // routes decleration
 app.use('/api/v1/users', userRouter);
 
@@ -44,5 +45,7 @@ app.use('/api/v1/subscribe' , SubscriberRouter)
 app.use('/api/v1/playlist' , playlistRouter)
 
 app.use('/api/v1/dashboard' , dashboardRouter)
+
+app.use('/api/v1/home' , homeRouter)
 
 export {app};

@@ -1,1 +1,1 @@
-# A backend project
+# A backend project which includes all the controller of an application and models or the routes 

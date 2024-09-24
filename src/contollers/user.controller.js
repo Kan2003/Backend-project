@@ -288,18 +288,18 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatar = await uploadImage(avatarLocalPath);
   //to delete old avatar
 
-  const oldAvatar = req.body.avatar;
+  const oldAvatar = req.user.avatar;
   console.log(oldAvatar);
 
   if (oldAvatar) {
-    deleteImage(oldAvatar);
+    await deleteImage(oldAvatar);
   }
 
   if (!avatar) {
     throw new ApiError(400, "error while uploading avatar");
   }
 
-  const user = await user
+  const user = await User
     .findByIdAndUpdate(
       req.user._id,
       {
